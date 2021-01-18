@@ -1,5 +1,6 @@
 
 object Strings {
+  const val TITLE = "WOTV"
   const val START_MATCHING = "Start matching"
   const val MATCHING_ELLIPSIS = "Matching..."
   const val SUCCESS = "Success!"

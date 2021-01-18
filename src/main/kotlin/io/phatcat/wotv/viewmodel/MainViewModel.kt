@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
-import java.io.File
+import org.bytedeco.opencv.opencv_core.Point
 
 class MainViewModel {
   private val templateMatching = TemplateMatching()
@@ -15,15 +15,18 @@ class MainViewModel {
   fun performMatch(
     sourceFilePath: String,
     templateFilePath: String
-  ): Flow<ImageBitmap> = flow {
+  ): Flow<MatchResult> = flow {
     try {
-      val file: File = withContext(Dispatchers.IO) {
+      val matchResult = withContext(Dispatchers.IO) {
         val result = templateMatching.matchExact(sourceFilePath, templateFilePath)
 
         // This is a workaround for extracting bytes directly from the resultant matrix into an ImageBitmap
-        templateMatching.writeToTempFile(result.overlayMat)
+        val image = templateMatching.writeToTempFile(result.overlayMat).toImageBitmap()
+        val resultText = result.points.joinToString("\n", transform = ::toFormattedString)
+        MatchResult(image, resultText)
       }
-      emit(file.toImageBitmap())
+
+      emit(matchResult)
     }
     catch (e: Throwable) {
       e.printStackTrace()
@@ -31,9 +34,10 @@ class MainViewModel {
     }
   }
 
-  data class MainUiModel(
-    val isMatching: Boolean,
-    val resultText: String,
-    val image: ImageBitmap
+  data class MatchResult(
+    val image: ImageBitmap,
+    val resultText: String
   )
+
+  private fun toFormattedString(point: Point) = "(${point.x()}, ${point.y()})"
 }
