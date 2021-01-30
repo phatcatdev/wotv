@@ -48,7 +48,7 @@ fun MainWindow() = Window(title = TITLE) {
             .onStart { isMatching = true }
             .onEach { matchResult ->
               image = matchResult.image
-              resultText = "$SUCCESS\n\n${matchResult.resultText}"
+              resultText = "$SUCCESS\n\nFound ${matchResult.numMatches} match(es)"
             }
             .catch { resultText = MATCHING_FAILED }
             .onCompletion { isMatching = false }

@@ -29,8 +29,10 @@ class TemplateMatching {
     val sourceColor: Mat = imread(sourceImagePath)
     val template: Mat = imread(templateImagePath)
 
-    //Size for the result image
-    val size = Size(sourceColor.cols() - template.cols() + 1, sourceColor.rows() - template.rows() + 1)
+    // Size for the result image
+    val templateWidth = template.cols() + 1
+    val templateHeight = template.rows() + 1
+    val size = Size(sourceColor.cols() - templateWidth, sourceColor.rows() - templateHeight)
     val result = Mat(size, CV_32FC1)
     matchTemplate(sourceColor, template, result, TM_CCORR_NORMED)
 
@@ -39,7 +41,13 @@ class TemplateMatching {
       rectangle(sourceColor, Rect(point.x(), point.y(), template.cols(), template.rows()), MATCH_COLOR, 2, 0, 0)
     }
 
-    return Result(sourceColor, points)
+    // We'll grab the upper left coordinate only
+    val groupedPoints = points.windowed(
+      size = templateWidth,
+      step = templateWidth
+    ).map(List<Point>::first)
+
+    return Result(sourceColor, groupedPoints)
   }
 
   /**

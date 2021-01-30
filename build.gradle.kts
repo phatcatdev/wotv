@@ -24,6 +24,8 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
     implementation("org.bytedeco:opencv-platform:4.4.0-1.5.4")
+    implementation("io.github.microutils:kotlin-logging-jvm:2.0.4")
+    implementation("org.slf4j:slf4j-simple:1.7.29")
 }
 
 tasks.test {
